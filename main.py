@@ -5,7 +5,7 @@ Created on Wed Oct 29 10:36:33 2025
 @author: Bart
 """
 
-from cli.cli import main
+from taakbeheer.cli.cli import main
 
 if __name__ == '__main__':
     main()

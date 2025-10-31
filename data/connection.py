@@ -6,13 +6,19 @@ Created on Thu Oct 30 09:30:47 2025
 """
 
 import sqlite3
-
-DATABASE_FILE = "taken.db"
+import os
 
 def get_connection():
     """maak een databaseverbinding"""
+    
+    # absolute pad van de directory waarin dit bestand zich bevindt
+    basedir = os.path.dirname(os.path.abspath(__file__))
+    
+    # het volledige pad naar het databasebestand in dezelfde directory.
+    db_path = os.path.join(basedir, 'taken.db')
+    
     try:
-        conn = sqlite3.connect(DATABASE_FILE)
+        conn = sqlite3.connect(db_path)
         return conn
     except sqlite3.Error as e:
         print(f"fout bij connecteren met database: {e}")
