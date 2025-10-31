@@ -9,7 +9,7 @@ from ..data import queries as qry
 
 class Task:
     
-    VALID_STATUSES = ("todo", "done", "cancelled")
+    
     
     def __init__(self, id = None, categorie_id = None, titel=None, status ="to do"):
         self.__id = id
@@ -48,4 +48,5 @@ class Task:
     
     def save(self):
             qry.insert_task(self)
+            
     
