@@ -29,7 +29,15 @@ def get_tasks():
         read_qry = "SELECT t.id, t.titel, t.status, c.categorienaam FROM taken t JOIN categorien c ON t.categorie_id = c.id"
         rows = mijncursor.execute(read_qry).fetchall()
         return rows
-    
+
+def get_categorienaam(categorie_id):
+    with get_connection() as conn: 
+        mijncursor = conn.cursor()
+        read_qry = "SELECT categorienaam FROM categorien WHERE id = ?"
+        mijncursor.execute(read_qry, (categorie_id,))
+        row = mijncursor.fetchone()
+        return row[0] if row else None
+
 def insert_task(task):
     with get_connection() as conn:
         mijncursor = conn.cursor()
@@ -71,7 +79,6 @@ def delete_task(task_id):
             print(f"fout: {e}")
     
 def delete_category(cat_id):
-    print('verwijder categorie')
     with get_connection() as conn:
         mijncursor = conn.cursor() 
         try:
