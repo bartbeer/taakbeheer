@@ -5,6 +5,9 @@ Created on Thu Oct 30 13:32:00 2025
 @author: Bart
 """
 
+import json
+import csv
+
 from ..data import queries as qry
 
 class Task:
@@ -45,6 +48,42 @@ class Task:
     def get_all():
         rows = qry.get_tasks()
         return [Task(id, categorie_id, titel, status) for id, categorie_id, titel, status in rows]
+    
+    def to_dict(self):
+        return {
+            "id": self.get_id(),
+            "titel": self.get_titel(),
+            "status": self.get_status(),
+            "categorie_id": self.get_category_id(),
+            "categorie_naam": qry.get_categorienaam(self.get_category_id()),
+        }
+    
+    @staticmethod
+    def get_all_as_dict():
+        return [task.to_dict() for task in Task.get_all()]
+    
+    def export_to_json(pad):
+        data = Task.get_all_as_dict()
+        if not data:
+            print("geen taken aanwezig")
+            return
+        with open(pad, "w", encoding ="utf-8") as f:
+            json.dump(data, f, ensure_ascii = False, indent = 4)
+        print(f"json opgeslagen als: {pad}")
+    
+    def export_to_excel(pad):
+        data = Task.get_all_as_dict()
+        if not data:
+            print("geen taken aanwezig")
+            return
+        kolommen = data[0].keys()
+        
+        with open(pad, "w", encoding = "utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=kolommen)
+            writer.writeheader()
+            writer.writerows(data)
+            
+        print(f"excel (CSV) opgeslagen als: {pad}")
     
     def save(self):
             qry.insert_task(self)

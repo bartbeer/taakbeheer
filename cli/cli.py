@@ -45,7 +45,9 @@ def main():
         print("3. taak status veranderen")
         print("4. taak verwijderen")
         print("5. categorie verwijderen")
-        print("6. stop het programma")
+        print("6. export tasks to json file")
+        print("7. export tasks to excel")
+        print("8. stop het programma")
 
         choice = input("\nselecteer optie: ")
         
@@ -86,8 +88,16 @@ def main():
             qry.delete_category(id)
             input("\n✅ categorie verwijderd. Druk op Enter om te verversen...")
             continue
-        
+ 
         elif choice == "6":
+            Task.export_to_json("taken.json")
+            continue
+       
+        elif choice == "7":
+            Task.export_to_excel("taken.csv")        
+            continue
+        
+        elif choice == "8":
             break
     
     
