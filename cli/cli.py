@@ -8,15 +8,18 @@ Created on Wed Oct 29 22:54:41 2025
 from ..data import queries as qry
 from ..models.task import Task
 from ..models.category import Category
+from ..data.init_db import init_db
 
 
-status_tpl = ("todo", "finished", "cancelled") 
-opdrachten_tpl = ("1 - taak toevoegen", "2 - taak wijzigen" , "3 - taak verwijeren" , "4 - ")
+status_tpl = ("todo", "done", "cancelled") 
+
 
 def main():
     
+    init_db()
+    
     while True:
-        print("welkom in taakbeheer".upper())
+        print("\nwelkom in taakbeheer".upper())
         print('hieronder de verschillende categorien:\n')
     
         cat = qry.get_categories()
@@ -53,34 +56,49 @@ def main():
         
         if choice =="1":
             categorienaam = input("naam categorie: ")
+            if not categorienaam:
+                print("categorienaam mag niet leeg zijn")
+                continue
+            
             uitleg = input("uitleg over categorie: ")
+            if not uitleg:
+                print("uitleg mag niet leeg zijn")
+                continue
+            
             category = Category(categorienaam = categorienaam, uitleg = uitleg) 
-            category.save()
-            input("\n✅ Categorie toegevoegd. Druk op Enter om te verversen...")
+            if category.save():
+                input("\n✅ Categorie toegevoegd. Druk op Enter om te verversen...")
             continue
         
         elif choice =="2":
             titel = input("Taak titel:")
             categorie_id = int(input("categorie_id: "))
             task = Task(titel = titel, categorie_id = categorie_id)
-            task.save()
-            input("\n✅ Taak toegevoegd. Druk op Enter om te verversen...")
+            if task.save():
+                input("\n✅ Taak toegevoegd. Druk op Enter om te verversen...")
             continue
          
         elif choice == "3":
             print("mogelijke status:\n")
-            for e in status_tpl:
-                print(e)
-            id = int(input("taaknummer: "))
-            status = input("naam status: ")
-            qry.adjust_task_status(id, status)
-            input("\n✅ Status aangepast. Druk op Enter om te verversen...")
+            for i, status in enumerate(status_tpl):
+                print(f"{i} - {status}")        
+            try:
+                id = int(input("taaknummer: "))
+                status = int(input("nummer status: "))
+                if 0 <= status < len(status_tpl):
+                    qry.adjust_task_status(id, status)
+                    input("\n✅ Status aangepast. Druk op Enter om te verversen...")
+                else:
+                    print(f"ongeldige keuze, kies een getal tussen 0 en {len(status_tpl)-1}")
+            except ValueError:
+                print("ongeldige invoer")
             continue
         
         elif choice == "4":
             id = int(input("geef het nummer van de taak die je wil verwijderen: "))
-            qry.delete_task(id)
-            input("\n✅ taak verwijderd. Druk op Enter om te verversen...")
+            succes = qry.delete_task(id)
+            if succes:
+                input("\n✅ taak verwijderd. Druk op Enter om te verversen...")
             continue
         
         elif choice == "5":

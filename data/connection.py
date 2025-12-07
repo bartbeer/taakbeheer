@@ -19,6 +19,9 @@ def get_connection():
     
     try:
         conn = sqlite3.connect(db_path)
+        
+        conn.execute("PRAGMA foreign_keys = ON;")
+        
         return conn
     except sqlite3.Error as e:
         print(f"fout bij connecteren met database: {e}")

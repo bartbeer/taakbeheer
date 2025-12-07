@@ -29,6 +29,7 @@ class Category:
         self.__uitleg = uitleg
         
     def save(self):
-        qry.insert_category(self)
+        passed = qry.insert_category(self)
+        return passed
         
         

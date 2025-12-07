@@ -14,7 +14,7 @@ class Task:
     
     
     
-    def __init__(self, id = None, categorie_id = None, titel=None, status ="to do"):
+    def __init__(self, id = None, categorie_id = None, titel=None, status ="todo"):
         self.__id = id
         self.__categorie_id = categorie_id 
         self.__titel = titel
@@ -86,6 +86,7 @@ class Task:
         print(f"excel (CSV) opgeslagen als: {pad}")
     
     def save(self):
-            qry.insert_task(self)
+            passed = qry.insert_task(self)
+            return passed
             
     
