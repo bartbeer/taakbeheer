@@ -119,19 +119,46 @@ def main():
                 print("ongeldige invoer")
             continue
         
-        elif choice == "4":
-            id = int(input("geef het nummer van de taak die je wil verwijderen: "))
-            succes = qry.delete_task(id)
-            if succes:
-                input("\n✅ taak verwijderd. Druk op Enter om te verversen...")
+        elif choice == "4":         
+            try:
+                id_str = input("geef het nummer van de taak die je wil verwijderen: ")
+                if not id_str.isdigit():
+                    print("Ongeldige invoer: taaknummer moet een getal zijn.")
+                    continue
+                taak_id = int(id_str)
+        
+                confirm = input(f"Weet je zeker dat je taak {taak_id} wilt verwijderen? (ja/nee): ").strip().lower()
+                if confirm != "ja":
+                    print("Verwijderen geannuleerd.")
+                    continue
+                succes = qry.delete_task(taak_id)
+                
+                if succes:
+                    input("\n✅ taak verwijderd. Druk op Enter om te verversen...")
+            
+            except ValueError:
+                print("ongeldige invoer")
             continue
         
         elif choice == "5":
-            id = int(input("geef het nummer van de categorie die je wil verwijderen: "))
-            qry.delete_category(id)
-            input("\n✅ categorie verwijderd. Druk op Enter om te verversen...")
-            continue
- 
+            try:
+                id = input("geef het nummer van de categorie die je wil verwijderen: ")
+                if not id.isdigit():
+                    print("Ongeldige invoer: categorienummer moet een getal zijn.")
+                cat_id = int(id)
+                
+                confirm = input(f"Weet je zeker dat je de categorie {cat_id} wilt verwijderen? (ja/nee): ").strip().lower()
+                if confirm != "ja":
+                    print("Verwijderen geannuleerd.")
+                    continue
+                succes = qry.delete_category(cat_id)
+                
+                if succes:
+                    input("\n✅ categorie verwijderd. Druk op Enter om te verversen...")
+            
+            except ValueError:
+                print("ongeldige invoer")
+            continue 
         elif choice == "6":
             Task.export_to_json("taken.json")
             continue

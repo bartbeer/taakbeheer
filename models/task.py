@@ -47,7 +47,15 @@ class Task:
         
     def get_all():
         rows = qry.get_tasks()
-        return [Task(id, categorie_id, titel, status) for id, categorie_id, titel, status in rows]
+        tasks = []
+        for row in rows:
+            # row = (id, titel, status, categorie_id, categorienaam)
+            task_id = row[0]
+            titel = row[1]
+            status = row[2]
+            categorie_id = row[3]
+            tasks.append(Task(task_id, categorie_id, titel, status))
+        return tasks
     
     def to_dict(self):
         return {
@@ -79,7 +87,7 @@ class Task:
         kolommen = data[0].keys()
         
         with open(pad, "w", encoding = "utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=kolommen)
+            writer = csv.DictWriter(f, fieldnames=kolommen, delimiter =';')
             writer.writeheader()
             writer.writerows(data)
             

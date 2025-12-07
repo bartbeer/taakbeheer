@@ -34,7 +34,7 @@ def get_tasks():
     try:
         with get_connection() as conn:
             mijncursor = conn.cursor()
-            read_qry = "SELECT t.id, t.titel, t.status, c.categorienaam FROM taken t JOIN categorien c ON t.categorie_id = c.id"
+            read_qry = "SELECT t.id, t.titel, t.status, t.categorie_id, c.categorienaam FROM taken t JOIN categorien c ON t.categorie_id = c.id"
             rows = mijncursor.execute(read_qry).fetchall()
             return rows
     except Exception as e:
@@ -116,6 +116,14 @@ def delete_category(cat_id):
     with get_connection() as conn:
         mijncursor = conn.cursor() 
         try:
+            check_qry = "SELECT COUNT(*) FROM taken WHERE categorie_id = ?"
+            mijncursor.execute(check_qry,(cat_id,))
+            count = mijncursor.fetchone()[0]
+            
+            if count > 0:
+                print(f"kan de categorie niet verwijderen, er bestaan nog { count} taken met deze categorie")
+                return False
+            
             delete_qry = "DELETE FROM categorien WHERE id  = ?"
             mijncursor.execute(delete_qry, (cat_id,))
             if mijncursor.rowcount == 0:
