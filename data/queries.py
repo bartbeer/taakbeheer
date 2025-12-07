@@ -11,9 +11,6 @@ from taakbeheer.data.connection import get_connection
 class IDNotFoundError(Exception):
     pass
 
-class TaskStatusUnchanged(Exception):
-    pass
-
 class CategoryNotFoundError(Exception):
     pass
 
@@ -32,7 +29,7 @@ def get_categories():
     except Exception as e:
         print(f"Fout bij het ophalen van categorieën: {e}")
         return None
-    
+  
 def get_tasks():
     try:
         with get_connection() as conn:
@@ -124,10 +121,13 @@ def delete_category(cat_id):
             if mijncursor.rowcount == 0:
                 raise IDNotFoundError()
             conn.commit()
+            return True
         except IDNotFoundError:
             print(f"kan geen categorie verwijderen met nummer {cat_id}, want deze bestaat niet")
+            return False
         except Exception as e:
             print(f"fout: {e}") 
+            return False
     
 def adjust_task_status(task_id, state):
     with get_connection() as conn:
@@ -135,27 +135,31 @@ def adjust_task_status(task_id, state):
         try:
             if state not in VALID_STATUSES:
                 raise ValueError(f"ongeldige status:'{state}'. " f"Geldige statussen: {', '.join(VALID_STATUSES)}")
+                return False
             
             select_qry = "SELECT status from taken WHERE id = ?"
             update_qry = "UPDATE taken SET status = ? WHERE id = ?"
+            
             mijncursor.execute(select_qry, (task_id,))
             result = mijncursor.fetchone()
+            
             if result is None:
-                raise IDNotFoundError()
+                print(f" de taak met nummer {task_id} bestaat niet.")
+                return False
+            
+            old_result = result[0]
                 
-            if result[0] == state:
-                raise TaskStatusUnchanged()
+            if old_result == state:
+                print(f"De taak met nummer {task_id} heeft reeds status '{state}'.")
+                return False
             
             mijncursor.execute(update_qry, (state, task_id))
             conn.commit()
             return True
         
-        except IDNotFoundError:
-            print(f"de taak met nummer {task_id} bestaat niet")
-        except TaskStatusUnchanged:
-            print(f"de taak met nummer {task_id} heeft reeds de status: {state}")
         except Exception as e:
             print(f"fout: {e}")
+            return False
     
 
 
