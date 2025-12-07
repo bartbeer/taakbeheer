@@ -7,3 +7,6 @@ om te starten maak folder taakbeheer en in de folder boven taakbeheer: in de cmd
 
 export files worden gesaved in de folder boven taakbeheer.
 
+Er is geen instellingenbestand nodig, omdat de database taken.db automatisch wordt aangemaakt in een relatief pad wanneer het programma start (inclusief voorbeelddata). 
+De exportbestanden taken.csv en taken.json worden eveneens automatisch aangemaakt in de map boven de projectfolder. Hierdoor zijn er geen configureerbare paden of instellingen nodig.
+
